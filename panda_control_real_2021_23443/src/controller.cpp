@@ -239,7 +239,7 @@ void ArmController::compute()
 
 		torque_desired_ = j_.transpose() * Lambda * F_star_zero_ + (I_ - j_.transpose() * j_t_dyn_cons_inv) * torque_init_;
 
-		writeFile2 << fixed << (play_time_ - control_start_time_) << "\t" <<  x_(0) << "\t" << x_(1) << "\t" << x_(2) << "\t" << x_dot_desired_(0) << "\t" << x_dot_desired_(1)<< "\t" << x_dot_desired_(2) << std::endl;
+		writeFile2 << fixed << (play_time_ - control_start_time_) << "\t" <<  x_(0) << "\t" << x_(1) << "\t" << x_(2) << "\t" << x_desired_(0) << "\t" << x_desired_(1)<< "\t" << x_desired_(2) << std::endl;
 
 	}
 	else if (control_mode_ == "HW6-2(3)")
@@ -296,7 +296,7 @@ void ArmController::compute()
 
 		torque_desired_ = j_.transpose() * Lambda * F_star_zero_ + (I_ - j_.transpose() * j_t_dyn_cons_inv) * torque_init_ + g_;
 
-		writeFile3 << fixed << (play_time_ - control_start_time_) << "\t" <<  x_(0) << "\t" << x_(1) << "\t" << x_(2) << "\t" << x_dot_desired_(0) << "\t" << x_dot_desired_(1)<< "\t" << x_dot_desired_(2) << std::endl;
+		writeFile3 << fixed << (play_time_ - control_start_time_) << "\t" <<  x_(0) << "\t" << x_(1) << "\t" << x_(2) << "\t" << x_desired_(0) << "\t" << x_desired_(1)<< "\t" << x_desired_(2) << std::endl;
 	}
 	else 
 	{
