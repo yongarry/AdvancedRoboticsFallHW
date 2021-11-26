@@ -134,9 +134,14 @@ void ArmController::compute()
 		k_hat_ = angle_axis_.axis();
 
 		x_dot_desired.block<3,1>(3,0) = theta_dot_*k_hat_;
-		x_desired.block<3,1>(3,0) = DyrosMath::rot2Euler(rotation_) + dt_ * x_dot_desired.block<3,1>(3,0);
 		
-        // Jacobian: pseudo inverse
+		// x_desired.block<3,1>(3,0) = DyrosMath::rot2Euler(rotation_) + dt_ * x_dot_desired.block<3,1>(3,0);
+		// get rot(desired - from qdesired)
+		angle_axis_desired = AngleAxisd(theta_, k_hat_);
+		rotation_desired_ = angle_axis_desired.toRotationMatrix();
+		x_desired.block<3,1>(3,0) = DyrosMath::getPhi(rotation_desired_, rotation_from_q_desired_);
+		
+       		// Jacobian: pseudo inverse
 		Matrix<double, 7, 6> j_pseudo_inverse;
 		j_pseudo_inverse = j_from_q_desired_.transpose() * (j_from_q_desired_ * j_from_q_desired_.transpose()).inverse();
 
@@ -146,15 +151,19 @@ void ArmController::compute()
 
 		Vector6d x_from_q_desired_with_rot;
 		x_from_q_desired_with_rot.block<3,1>(0,0) = x_from_q_desired_;
-		x_from_q_desired_with_rot.block<3,1>(3,0) = DyrosMath::rot2Euler(rotation_from_q_desired_);
+		//x_from_q_desired_with_rot.block<3,1>(3,0) = DyrosMath::rot2Euler(rotation_from_q_desired_);
+		x_from_q_desired_with_rot.block<3,1>(3,0) << 0.0, 0.0, 0.0;
 
 		qdot_desired_ = j_pseudo_inverse * (x_dot_desired + K_p * (x_desired - x_from_q_desired_with_rot));
-        q_desired_ = q_desired_ + dt_ * qdot_desired_ ;
-
-		writeFile << fixed << (play_time_ - control_start_time_) << "\t" <<  x_(0) << "\t" << x_(1) << "\t" << x_(2) << "\t" << x_desired(0) << "\t" << x_desired(1)<< "\t" << x_desired(2) << std::endl;
+       		q_desired_ = q_desired_ + dt_ * qdot_desired_ ;
+		
+		Matrix3d rotation_current = rotation_.transpose() * rotation_target_;
+		AngleAxisd angle_axis_current.fromRotationMatrix(rotation_current);
+		double theta_current = angle_axis_current.angle();
+		writeFile << fixed << (play_time_ - control_start_time_) << "\t" <<  x_(0) << "\t" << x_(1) << "\t" << x_(2) << "\t" << x_desired(0) << "\t" << x_desired(1)<< "\t" << x_desired(2) << theta_current << theta_ << std::endl;
 	}
-    else if (control_mode_ == "HW6-2(1)")
-    {
+    	else if (control_mode_ == "HW6-2(1)")
+    	{
 		double duration = 5.0;
 
 		Matrix7d K_p, K_v;
@@ -188,7 +197,7 @@ void ArmController::compute()
 
 		writeFile1 << fixed << (play_time_ - control_start_time_) << "\t" <<  q_(3) << "\t" << q_desired_(3) << std::endl;
 
-    }
+   	}
 	else if (control_mode_ == "HW6-2(2)")
 	{
 		double duration = 5.0;
