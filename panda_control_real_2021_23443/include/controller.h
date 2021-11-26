@@ -54,6 +54,7 @@ class ArmController
     Vector3d x_from_q_desired_;
     Matrix3d rotation_from_q_desired_;
 	AngleAxisd angle_axis_;
+	AngleAxisd angle_axis_desired;
 	Vector3d k_hat_;
 
 	// Dynamics
