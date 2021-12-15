@@ -160,7 +160,7 @@ void ArmController::compute()
 		Matrix3d rotation_current = rotation_.transpose() * rotation_target_;
 		AngleAxisd angle_axis_current.fromRotationMatrix(rotation_current);
 		double theta_current = angle_axis_current.angle();
-		writeFile << fixed << (play_time_ - control_start_time_) << "\t" <<  x_(0) << "\t" << x_(1) << "\t" << x_(2) << "\t" << x_desired(0) << "\t" << x_desired(1)<< "\t" << x_desired(2) << theta_current << theta_ << std::endl;
+		writeFile << fixed << (play_time_ - control_start_time_) << "\t" <<  x_(0) << "\t" << x_(1) << "\t" << x_(2) << "\t" << x_desired(0) << "\t" << x_desired(1)<< "\t" << x_desired(2) << "\t" << theta_current << "\t" << theta_ << std::endl;
 	}
     	else if (control_mode_ == "HW6-2(1)")
     	{
